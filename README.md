@@ -75,7 +75,7 @@ python diff.py ./img/UAE23_stego.jpg ./temp/UAE23_temp.jpg --output ./temp/diff_
 
 ## Guess the key
 
-Can you get the embed message in `./img/Almond_Eye_stego.png`
+Can you get the embed message in `./img/Almond_Eye_stego.jpg`
 
 Hints:
 1. A single word in English
