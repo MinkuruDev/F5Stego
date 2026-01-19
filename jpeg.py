@@ -126,7 +126,7 @@ def read_n_bits(block: np.ndarray, n: int) -> int:
     """
     if n == 1 and len(block) == 1:
         coeff = block[0]
-        lsb = abs(coeff) & 1
+        lsb = (1-coeff if coeff < 0 else coeff) % 2
         return lsb
     W = 2**n - 1
     # W = (1 << n) - 1
@@ -138,7 +138,7 @@ def read_n_bits(block: np.ndarray, n: int) -> int:
     value = util.create_array(0, W, 1, dtype=int)
     for i in range(W):
         coeff = block[i]
-        lsb = abs(coeff) & 1
+        lsb = (1-coeff if coeff < 0 else coeff) % 2
         value[i][0] = lsb
 
     represent_matrix = util.parity_matrix(n) @ value
@@ -158,7 +158,7 @@ def write_n_bits(coefficients: np.ndarray, indicies: np.ndarray, n: int, value: 
     if n == 1 and len(indicies) == 1:
         target_index = indicies[0]
         coeff = coefficients[target_index]
-        lsb = abs(coeff) & 1
+        lsb = (1-coeff if coeff < 0 else coeff) % 2
         if lsb != (value & 1):
             coefficients[target_index] += 1 if coeff < 0 else -1
             return target_index
@@ -173,7 +173,7 @@ def write_n_bits(coefficients: np.ndarray, indicies: np.ndarray, n: int, value: 
     current_bits = util.create_array(0, W, 1, dtype=int)
     for i in range(W):
         coeff = coefficients[indicies[i]]
-        lsb = abs(coeff) & 1
+        lsb = (1-coeff if coeff < 0 else coeff) % 2
         current_bits[i][0] = lsb
 
     current_value = (parity @ current_bits) % 2
