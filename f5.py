@@ -13,7 +13,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def embed_message(input_path: Path, message: str, password: str, output_path: Path):
+def embed_message(input_path: Path, message: str, password: str, output_path: Path, keep_temp: bool):
     """
     Embed a message into a JPEG image using F5 steganography.
 
@@ -30,7 +30,8 @@ def embed_message(input_path: Path, message: str, password: str, output_path: Pa
     jpeg_image.Y, jpeg_image.Cb, jpeg_image.Cr = \
         jpeg.reconstruct_dct(modified_coefficients, meta)
     jpeg_image.write_dct(str(output_path))
-    os.remove(temp_path)
+    if not keep_temp:
+        os.remove(temp_path)
 
 def extract_message(input_path: Path, password: str) -> str:
     """
@@ -54,11 +55,12 @@ argparser.add_argument('-i', '--input', type=Path, help='Input JPEG image path',
 argparser.add_argument('-o', '--output', type=Path, help='Output JPEG image path (for embed only)')
 argparser.add_argument('-m', '--message', type=str, help='Message to embed into the image (for embed only)')
 argparser.add_argument('-p', '--password', type=str, help='Password for embedding/extracting', default='')
+argparser.add_argument('-k', '--keep', action='store_true', help='Keep temporary files')
 
 if __name__ == "__main__":
     args = argparser.parse_args()
     if args.command == 'embed' or args.command == 'e':
-        embed_message(args.input, args.message, args.password, args.output)
+        embed_message(args.input, args.message, args.password, args.output, args.keep)
         logger.info(f"Message embedded successfully into {args.output}")
     elif args.command == 'extract' or args.command == 'x':
         message = extract_message(args.input, args.password)
